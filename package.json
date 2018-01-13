@@ -1,0 +1,19 @@
+{
+  "name": "template-code-generator",
+  "version": "1.0.0",
+  "description": "This project is used for generating template code and saving time while developing projects that have common patterns in its codebase.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://civerazdaM@github.com/civerazdaM/template-code-generator.git"
+  },
+  "author": "Stefan Madzarevic",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/civerazdaM/template-code-generator/issues"
+  },
+  "homepage": "https://github.com/civerazdaM/template-code-generator#readme"
+}

@@ -4,7 +4,16 @@
   "description": "This project is used for generating template code and saving time while developing projects that have common patterns in its codebase.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha",
+    "make:constants": "node generators/react-redux/when-creating-new/constants.js --scriptName=make:constants",
+    "make:actions": "node generators/react-redux/when-creating-new/actions.js --scriptName=make:actions",
+    "make:api": "node generators/react-redux/when-creating-new/api.js --scriptName=make:api",
+    "make:sagas": "node generators/react-redux/when-creating-new/sagas.js --scriptName=make:sagas",
+    "make:reducer": "node generators/react-redux/when-creating-new/reducer.js --scriptName=make:reducer",
+    "make:selectors": "node generators/react-redux/when-creating-new/selectors.js --scriptName=make:selectors",
+    "make:containerComponent": "node generators/react-redux/when-creating-new/containerComponent.js --scriptName=make:containerComponent",
+    "make:classComponent": "node generators/react-redux/when-creating-new/classComponent.js --scriptName=make:classComponent",
+    "make:container": "node generators/react-redux/when-creating-new/container.js --scriptName=make:container"
   },
   "repository": {
     "type": "git",
@@ -15,5 +24,15 @@
   "bugs": {
     "url": "https://github.com/civerazdaM/template-code-generator/issues"
   },
-  "homepage": "https://github.com/civerazdaM/template-code-generator#readme"
+  "homepage": "https://github.com/civerazdaM/template-code-generator#readme",
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "change-case": "^3.0.1",
+    "handlebars": "^4.0.11",
+    "yargs": "^10.1.1"
+  },
+  "devDependencies": {
+    "chai": "^4.1.2",
+    "mocha": "^4.1.0"
+  }
 }

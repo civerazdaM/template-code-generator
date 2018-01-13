@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { {{camelCaseActionName}}Request } from './{{camelCaseContainerName}}Actions';
 import { makeSelectIs{{pascalCaseActionName}}InProgress, makeSelectIs{{pascalCaseActionName}}Failed, makeSelect{{pascalCaseName}} } from './{{camelCaseContainerName}}Selectors';
-import Spinner from "../../componentsCommon/Spinner/index";
-import FailurePage from "../../componentsCommon/FailurePage/index";
-import {{pascalCaseName}}Component from './components/{{pascalCaseName}}Component';
+import Spinner from "../../componentsCommon/Spinner";
+import FailurePage from "../../componentsCommon/FailurePage";
+import {{pascalCaseName}} from './components/{{pascalCaseName}}';
 
 class {{pascalCaseContainerName}}Page extends Component {
 
@@ -27,7 +27,7 @@ class {{pascalCaseContainerName}}Page extends Component {
       return(<Spinner />);
     }
 
-    return (<{{pascalCaseName}}Component {{camelCaseName}}={ {{camelCaseName}}.toJS() } />);
+    return (<{{pascalCaseName}} {{camelCaseName}}={ {{camelCaseName}}.toJS() } />);
   }
 }
 

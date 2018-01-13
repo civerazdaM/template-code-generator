@@ -1,0 +1,51 @@
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import { {{camelCaseActionName}}Request } from './{{camelCaseContainerName}}Actions';
+import { makeSelectIs{{pascalCaseActionName}}InProgress, makeSelectIs{{pascalCaseActionName}}Failed, makeSelect{{pascalCaseName}} } from './{{camelCaseContainerName}}Selectors';
+import Spinner from "../../componentsCommon/Spinner/index";
+import FailurePage from "../../componentsCommon/FailurePage/index";
+import {{pascalCaseName}}Component from './components/{{pascalCaseName}}Component';
+
+class {{pascalCaseContainerName}}Page extends Component {
+
+  componentWillMount(){
+    this.props.dispatch{{pascalCaseActionName}}Request();
+  }
+
+  render() {
+    let { is{{pascalCaseActionName}}InProgress, is{{pascalCaseActionName}}Failed, {{camelCaseName}} } = this.props;
+    let isLoading = !{{camelCaseName}};
+    let isFailed = is{{pascalCaseActionName}}Failed;
+
+    if(isFailed){
+      return(<FailurePage />);
+    }
+
+    if(isLoading){
+      return(<Spinner />);
+    }
+
+    return (<{{pascalCaseName}}Component {{camelCaseName}}={ {{camelCaseName}}.toJS() } />);
+  }
+}
+
+{{pascalCaseContainerName}}Page.propTypes = {
+  is{{pascalCaseActionName}}InProgress: PropTypes.bool.isRequired,
+  is{{pascalCaseActionName}}Failed: PropTypes.bool.isRequired,
+  {{camelCaseName}}: PropTypes.object,
+  dispatch{{pascalCaseActionName}}Request: PropTypes.func.isRequired,
+};
+
+const mapStateToProps = createStructuredSelector({
+  is{{pascalCaseActionName}}InProgress: makeSelectIs{{pascalCaseActionName}}InProgress(),
+  is{{pascalCaseActionName}}Failed: makeSelectIs{{pascalCaseActionName}}Failed(),
+  {{camelCaseName}}: makeSelect{{pascalCaseName}}(),
+});
+
+const mapDispatchToPropsObj = {
+  dispatch{{pascalCaseActionName}}Request: {{camelCaseActionName}}Request,
+};
+
+export default connect(mapStateToProps, mapDispatchToPropsObj) ({{pascalCaseContainerName}}Page);

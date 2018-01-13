@@ -1,0 +1,20 @@
+import { {{constantActionName}}_REQUEST, {{constantActionName}}_SUCCESS, {{constantActionName}}_FAILURE } from './{{camelCaseContainerName}}Constants';
+
+export function {{camelCaseActionName}}Request() {
+  return {
+    type: {{constantActionName}}_REQUEST,
+  };
+}
+
+export function {{camelCaseActionName}}Success({{camelCaseName}}) {
+  return {
+    type: {{constantActionName}}_SUCCESS,
+    {{camelCaseName}}
+  };
+}
+
+export function {{camelCaseActionName}}Failure() {
+  return {
+    type: {{constantActionName}}_FAILURE,
+  };
+}

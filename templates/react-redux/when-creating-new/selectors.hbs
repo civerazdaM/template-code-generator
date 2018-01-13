@@ -1,0 +1,25 @@
+import { createSelector } from 'reselect';
+
+const select{{pascalCaseContainerName}} = (state) => state.get('{{camelCaseContainerName}}');
+
+const makeSelectIs{{pascalCaseActionName}}InProgress = () => createSelector(
+  select{{pascalCaseContainerName}},
+  ({{camelCaseContainerName}}State) => {{camelCaseContainerName}}State.get('is{{pascalCaseActionName}}InProgress')
+);
+
+const makeSelectIs{{pascalCaseActionName}}Failed = () => createSelector(
+  select{{pascalCaseContainerName}},
+  ({{camelCaseContainerName}}State) => {{camelCaseContainerName}}State.get('is{{pascalCaseActionName}}Failed')
+);
+
+const makeSelect{{pascalCaseName}} = () => createSelector(
+  select{{pascalCaseContainerName}},
+  ({{camelCaseContainerName}}State) => {{camelCaseContainerName}}State.get('{{camelCaseName}}')
+);
+
+export {
+  select{{pascalCaseContainerName}},
+  makeSelectIs{{pascalCaseActionName}}InProgress,
+  makeSelectIs{{pascalCaseActionName}}Failed,
+  makeSelect{{pascalCaseName}},
+}

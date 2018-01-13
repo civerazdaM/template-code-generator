@@ -1,0 +1,19 @@
+import { takeLatest, put, call } from 'redux-saga/effects';
+import { {{constantActionName}}_REQUEST } from './{{camelCaseContainerName}}Constants';
+import { {{camelCaseActionName}}Success, {{camelCaseActionName}}Failure } from './{{camelCaseContainerName}}Actions';
+import { {{camelCaseActionName}}Api } from '../../api/{{camelCaseContainerName}}Api';
+
+export function* {{camelCaseActionName}}Saga() {
+  yield takeLatest({{constantActionName}}_REQUEST, {{camelCaseActionName}});
+}
+
+function* {{camelCaseActionName}}() {
+  try {
+    let {{camelCaseName}} = yield call({{camelCaseActionName}}Api);
+    yield put({{camelCaseActionName}}Success({{camelCaseName}}));
+  } catch(e) {
+    //eslint-disable-next-line
+    console.warn('{{camelCaseName}} fetch failed, please try again ...', e);
+    yield put({{camelCaseActionName}}Failure());
+  }
+}

@@ -6,6 +6,7 @@ const chalk = require('chalk');
 
 const fileNameTypes = require('./constants').fileNameTypes;
 const baseDirectoryPaths = require('./constants').baseDirectoryPaths;
+const END_OF_IMPORT_ALL = require('./constants').END_OF_IMPORT_ALL;
 
 function createFileName({fileNameType, endNameString, camelCaseContainerName, pascalCaseContainerName}) {
   switch (fileNameType) {
@@ -46,6 +47,42 @@ function createMissingDirectories(filepath) {
   }
 }
 
+function parseRegex({ originalFileContent, regex, results }) {
+  let match;
+  while (match = regex.regexExp.exec(originalFileContent)) {
+    let identifier = regex.resolveIdentifier({originalFileContent, match});
+    results.push({start: match.index, end: match[0].length - regex.FILE_FLAG.length, match: match[0], FILE_FLAG: regex.FILE_FLAG, identifier:identifier});
+  }
+
+  return results;
+}
+
+function insertStringAtPosition({originalString, stringToInsert, position}) {
+  return originalString.substring(0, position) + stringToInsert + originalString.substring(position);
+}
+
+function prepareDataForInsert({ regexString, identifier, FILE_FLAG, compiledTemplate }) {
+  if(!identifier.TEMPLATE_END_FLAG){
+    return false;
+  }
+  return parseSingleRegexStatement({regexString, FILE_FLAG, identifier, compiledTemplate});
+}
+
+function parseSingleRegexStatement({ regexString, FILE_FLAG, identifier, compiledTemplate }){
+  let unchangedPartOfRegex = regexString.substring(0, regexString.lastIndexOf(FILE_FLAG) - 1);
+  let templatePartToInsert = compiledTemplate.substring( compiledTemplate.lastIndexOf(identifier.TEMPLATE_START_FLAG) + identifier.TEMPLATE_START_FLAG.length, compiledTemplate.lastIndexOf(identifier.TEMPLATE_END_FLAG));
+  return {
+    unchangedPartOfRegex,
+    templatePartToInsert
+  }
+}
+
+function modifySelectedRegex({originalString, preparedData, position}) {
+  let modifiedRegex = insertStringAtPosition({originalString, stringToInsert: preparedData.unchangedPartOfRegex, position});
+  modifiedRegex = insertStringAtPosition({originalString: modifiedRegex, stringToInsert: preparedData.templatePartToInsert, position: modifiedRegex.length});
+  return modifiedRegex;
+}
+
 const checkArguments = function (argv) {
     if(!argv.container || !argv.action || !argv.name) {
         throw new Error(`Container, action, name parameters are required for ${argv.scriptName} script!
@@ -83,6 +120,58 @@ const compileStaticTemplate = function ({pathToTemplate, templateArguments}) {
   return handlebars.compile(template.toString())(templateArguments);
 };
 
+const compileUpdatedFileContent = function ({pathToFile, compiledTemplate, regexArray}) {
+  let originalFileContent = fs.readFileSync(pathToFile).toString();
+
+  let position = 0;
+  let lastMatchedPosition = 0;
+  let results = [];
+  let updatedFileContent = '';
+
+  regexArray && regexArray.map(regex => {
+    results = parseRegex({ originalFileContent, regex, results });
+  });
+
+  if(results.length) {
+    results.sort((a, b) => {
+      if ( a.start < b.start ){
+        return -1;
+      }
+      if ( a.start > b.start){
+        return 1;
+      }
+      return 0;
+    });
+    updatedFileContent = results.reduce((acc, curr) => {
+      if(curr.start > lastMatchedPosition) {
+        let unchangedFileContent = originalFileContent.substring(lastMatchedPosition, curr.start);
+        acc = insertStringAtPosition({originalString:acc, stringToInsert: unchangedFileContent, position});
+        position = acc.length;
+        lastMatchedPosition += unchangedFileContent.length;
+      }
+      let preparedData = prepareDataForInsert({ regexString: curr.match, identifier: curr.identifier, FILE_FLAG: curr.FILE_FLAG, compiledTemplate }) ;
+      if(preparedData) {
+        acc = modifySelectedRegex({originalString: acc, preparedData, position});
+        position = acc.length;
+        lastMatchedPosition += curr.end;
+      }
+
+      return acc;
+    }, '');
+
+    if(lastMatchedPosition < originalFileContent.length) {
+      updatedFileContent += originalFileContent.substring(lastMatchedPosition, originalFileContent.length);
+    }
+
+    if(compiledTemplate.includes(END_OF_IMPORT_ALL)){
+      updatedFileContent += compiledTemplate.substring(compiledTemplate.lastIndexOf(END_OF_IMPORT_ALL) + END_OF_IMPORT_ALL.length, compiledTemplate.length);
+    }
+
+    return updatedFileContent;
+  }
+
+};
+
 const writeFile = function ({newFilePath, content}) {
   createMissingDirectories(newFilePath.substring(0, newFilePath.lastIndexOf('/')));
   fs.writeFile(newFilePath, content, err => {
@@ -97,5 +186,6 @@ module.exports = {
   checkArguments,
   parseInput,
   compileStaticTemplate,
+  compileUpdatedFileContent,
   writeFile
 }

@@ -33,7 +33,9 @@ const templateFilePaths = {
   'CONSTANTS': 'templates/react-redux/when-creating-new/constants.hbs',
   'ACTIONS': 'templates/react-redux/when-creating-new/actions.hbs',
   'SAGAS': 'templates/react-redux/when-creating-new/sagas.hbs',
+  'ROOT_SAGA': 'templates/react-redux/when-creating-new/rootSaga.hbs',
   'REDUCER': 'templates/react-redux/when-creating-new/reducer.hbs',
+  'ROOT_REDUCER': 'templates/react-redux/when-creating-new/rootReducer.hbs',
   'SELECTORS': 'templates/react-redux/when-creating-new/selectors.hbs',
   'CONTAINER_COMPONENT': 'templates/react-redux/when-creating-new/containerComponent.hbs',
   'CLASS_COMPONENT': 'templates/react-redux/when-creating-new/classComponent.hbs',
@@ -41,9 +43,12 @@ const templateFilePaths = {
   'API': 'templates/react-redux/when-creating-new/api.hbs',
 };
 
+const END_OF_IMPORT_ALL = '#END_OF_IMPORT_ALL';
+
 module.exports = {
   baseDirectoryPaths,
   fileNameTypes,
   endNameStrings,
-  templateFilePaths
+  templateFilePaths,
+  END_OF_IMPORT_ALL
 }

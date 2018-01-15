@@ -41,6 +41,14 @@ const templateFilePaths = {
   'CLASS_COMPONENT': 'templates/react-redux/when-creating-new/classComponent.hbs',
   'STATELESS_COMPONENT': 'templates/react-redux/when-creating-new/statelessComponent.hbs',
   'API': 'templates/react-redux/when-creating-new/api.hbs',
+  'CONSTANTS_UPDATE': 'templates/react-redux/when-updating-existing/constants.hbs',
+  'ACTIONS_UPDATE': 'templates/react-redux/when-updating-existing/actions.hbs',
+  'SAGAS_UPDATE': 'templates/react-redux/when-updating-existing/sagas.hbs',
+  'ROOT_SAGA_UPDATE': 'templates/react-redux/when-updating-existing/rootSaga.hbs',
+  'REDUCER_UPDATE': 'templates/react-redux/when-updating-existing/reducer.hbs',
+  'SELECTORS_UPDATE': 'templates/react-redux/when-updating-existing/selectors.hbs',
+  'CONTAINER_COMPONENT_UPDATE': 'templates/react-redux/when-updating-existing/containerComponent.hbs',
+  'API_UPDATE': 'templates/react-redux/when-updating-existing/api.hbs',
 };
 
 const END_OF_IMPORT_ALL = '#END_OF_IMPORT_ALL';

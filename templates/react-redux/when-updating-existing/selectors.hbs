@@ -1,7 +1,4 @@
-import { createSelector } from 'reselect';
-
-const select{{pascalCaseContainerName}} = (state) => state.get('{{camelCaseContainerName}}');
-
+#START_OF_IMPORT_SELECTOR
 const makeSelectIs{{pascalCaseActionName}}InProgress = () => createSelector(
   select{{pascalCaseContainerName}},
   ({{camelCaseContainerName}}State) => {{camelCaseContainerName}}State.get('is{{pascalCaseActionName}}InProgress')
@@ -17,9 +14,10 @@ const makeSelect{{pascalCaseName}} = () => createSelector(
   ({{camelCaseContainerName}}State) => {{camelCaseContainerName}}State.get('{{camelCaseName}}')
 );
 
-export {
-  select{{pascalCaseContainerName}},
+#END_OF_IMPORT_SELECTOR
+#START_OF_EXPORT_SELECTOR
   makeSelectIs{{pascalCaseActionName}}InProgress,
   makeSelectIs{{pascalCaseActionName}}Failed,
   makeSelect{{pascalCaseName}},
-}
+#END_OF_EXPORT_SELECTOR
+#END_OF_IMPORT_ALL

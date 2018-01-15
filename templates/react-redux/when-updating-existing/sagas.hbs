@@ -1,0 +1,19 @@
+#START_OF_IMPORT_CONSTANTS, {{constantActionName}}_REQUEST #END_OF_IMPORT_CONSTANTS
+#START_OF_IMPORT_ACTIONS, {{camelCaseActionName}}Success, {{camelCaseActionName}}Failure #END_OF_IMPORT_ACTIONS
+#START_OF_IMPORT_API, {{camelCaseActionName}}Api #END_OF_IMPORT_API
+#END_OF_IMPORT_ALL
+
+export function* {{camelCaseActionName}}Saga() {
+  yield takeLatest({{constantActionName}}_REQUEST, {{camelCaseActionName}});
+}
+
+function* {{camelCaseActionName}}() {
+  try {
+    let {{camelCaseName}} = yield callWithTokenRefresh({{camelCaseActionName}}Api);
+    yield put({{camelCaseActionName}}Success({{camelCaseName}}));
+  } catch(e) {
+    //eslint-disable-next-line
+    console.warn('{{camelCaseName}} fetch failed, please try again ...', e);
+    yield put({{camelCaseActionName}}Failure());
+  }
+}

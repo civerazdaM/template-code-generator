@@ -394,7 +394,8 @@ export {
   makeSelectIsGetSomethingInProgress,
   makeSelectIsGetSomethingFailed,
   makeSelectSomething,
-}`);
+}
+`);
     });
 
     it('when called from when-creating-new/containerComponent.js', function() {
@@ -506,6 +507,92 @@ export default Something;`);
       };
 
       expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.ROOT_SAGA);
+    });
+
+    it('when called from when-updating-existing/actions.js', function() {
+      const pathToTemplate = templateFilePaths.ACTIONS_UPDATE;
+      const templateArguments = {
+        constantActionName: 'GET_ANOTHER',
+        camelCaseActionName: 'getAnother',
+        camelCaseName: 'another'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.ACTIONS_UPDATE);
+    });
+
+    it('when called from when-updating-existing/constants.js', function() {
+      const pathToTemplate = templateFilePaths.CONSTANTS_UPDATE;
+      const templateArguments = {
+        constantActionName: 'GET_ANOTHER',
+        pascalCaseContainerName: 'Example'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.CONSTANTS_UPDATE);
+    });
+
+    it('when called from when-updating-existing/api.js', function() {
+      const pathToTemplate = templateFilePaths.API_UPDATE;
+      const templateArguments = {
+        camelCaseActionName: 'getAnother'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.API_UPDATE);
+    });
+
+    it('when called from when-updating-existing/reducer.js', function() {
+      const pathToTemplate = templateFilePaths.REDUCER_UPDATE;
+      const templateArguments = {
+        constantActionName: 'GET_ANOTHER',
+        pascalCaseActionName: 'GetAnother',
+        camelCaseName: 'another'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.REDUCER_UPDATE);
+    });
+
+    it('when called from when-updating-existing/sagas.js', function() {
+      const pathToTemplate = templateFilePaths.SAGAS_UPDATE;
+      const templateArguments = {
+        constantActionName: 'GET_ANOTHER',
+        camelCaseActionName: 'getAnother',
+        camelCaseName: 'another'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.SAGAS_UPDATE);
+    });
+
+    it('when called from when-updating-existing/rootSaga.js', function() {
+      const pathToTemplate = templateFilePaths.ROOT_SAGA_UPDATE;
+      const templateArguments = {
+        camelCaseActionName: 'getAnother'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.ROOT_SAGA_UPDATE);
+    });
+
+    it('when called from when-updating-existing/selectors.js', function() {
+      const pathToTemplate = templateFilePaths.SELECTORS_UPDATE;
+      const templateArguments = {
+        pascalCaseActionName: 'GetAnother',
+        camelCaseContainerName: 'examole',
+        pascalCaseContainerName: 'Example',
+        camelCaseName: 'another',
+        pascalCaseName: 'Another'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.SELECTORS_UPDATE);
+    });
+
+    it('when called from when-updating-existing/containerComponent.js', function() {
+      const pathToTemplate = templateFilePaths.CONTAINER_COMPONENT_UPDATE;
+      const templateArguments = {
+        camelCaseActionName: 'getAnother',
+        pascalCaseActionName: 'GetAnother',
+        camelCaseName: 'another',
+        pascalCaseName: 'Another'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.CONTAINER_COMPONENT_UPDATE);
     });
   });
 

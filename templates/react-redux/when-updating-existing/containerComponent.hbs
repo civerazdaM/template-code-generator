@@ -1,0 +1,21 @@
+#START_OF_IMPORT_ACTIONS, {{camelCaseActionName}}Request #END_OF_IMPORT_ACTIONS
+
+#START_OF_IMPORT_SELECTORS, makeSelectIs{{pascalCaseActionName}}InProgress, makeSelectIs{{pascalCaseActionName}}Failed, makeSelect{{pascalCaseName}} #END_OF_IMPORT_SELECTORS
+
+#START_OF_IMPORT_PROP_TYPE
+  is{{pascalCaseActionName}}InProgress: PropTypes.bool.isRequired,
+  is{{pascalCaseActionName}}Failed: PropTypes.bool.isRequired,
+  {{camelCaseName}}: PropTypes.object,
+dispatch{{pascalCaseActionName}}Request: PropTypes.func.isRequired,
+#END_OF_IMPORT_PROP_TYPE
+
+#START_OF_IMPORT_FROM_SELECTORS
+  is{{pascalCaseActionName}}InProgress: makeSelectIs{{pascalCaseActionName}}InProgress(),
+  is{{pascalCaseActionName}}Failed: makeSelectIs{{pascalCaseActionName}}Failed(),
+  {{camelCaseName}}: makeSelect{{pascalCaseName}}(),
+#END_OF_IMPORT_FROM_SELECTORS
+
+#START_OF_IMPORT_DISPATCH
+  dispatch{{pascalCaseActionName}}Request: {{camelCaseActionName}}Request,
+#END_OF_IMPORT_DISPATCH
+#END_OF_IMPORT_ALL

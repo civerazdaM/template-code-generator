@@ -8,6 +8,13 @@ const templateFilePaths = require('../generators/util/constants').templateFilePa
 const checkArguments = require('../generators/util').checkArguments;
 const parseInput = require('../generators/util').parseInput;
 const compileStaticTemplate = require('../generators/util').compileStaticTemplate;
+const compileUpdatedFileContent = require('../generators/util').compileUpdatedFileContent;
+const resolveIdentifierRootReducer = require('../generators/util').resolveIdentifierRootReducer;
+const resolveIdentifierRootSaga = require('../generators/util').resolveIdentifierRootSaga;
+
+const compiledStaticTemplates = require('../mock/constants').compiledStaticTemplates;
+const mockFilesPaths = require('../mock/constants').mockFilesPaths;
+const readMockFile = require('../generators/util').readMockFile;
 
 describe('Generator Scripts', function() {
     describe('checkArguments', function() {
@@ -407,9 +414,9 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { getSomethingRequest } from './exampleActions';
 import { makeSelectIsGetSomethingInProgress, makeSelectIsGetSomethingFailed, makeSelectSomething } from './exampleSelectors';
-import Spinner from "../../componentsCommon/Spinner/index";
-import FailurePage from "../../componentsCommon/FailurePage/index";
-import SomethingComponent from './components/SomethingComponent';
+import Spinner from "../../componentsCommon/Spinner";
+import FailurePage from "../../componentsCommon/FailurePage";
+import Something from './components/Something';
 
 class ExamplePage extends Component {
 
@@ -430,7 +437,7 @@ class ExamplePage extends Component {
       return(<Spinner />);
     }
 
-    return (<SomethingComponent something={ something.toJS() } />);
+    return (<Something something={ something.toJS() } />);
   }
 }
 
@@ -451,7 +458,8 @@ const mapDispatchToPropsObj = {
   dispatchGetSomethingRequest: getSomethingRequest,
 };
 
-export default connect(mapStateToProps, mapDispatchToPropsObj) (ExamplePage);`);
+export default connect(mapStateToProps, mapDispatchToPropsObj) (ExamplePage);
+`);
     });
 
     it('when called from when-creating-new/classComponent.js', function() {
@@ -477,6 +485,44 @@ Something.propTypes = {
 };
 
 export default Something;`);
+    });
+
+    it('when called from when-creating-new/rootReducer.js', function() {
+      const pathToTemplate = templateFilePaths.ROOT_REDUCER;
+      const templateArguments = {
+        camelCaseContainerName: 'example',
+        pascalCaseContainerName: 'Example'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.ROOT_REDUCER);
+    });
+
+    it('when called from when-creating-new/rootSaga.js', function() {
+      const pathToTemplate = templateFilePaths.ROOT_SAGA;
+      const templateArguments = {
+        camelCaseContainerName: 'example',
+        pascalCaseContainerName: 'Example',
+        camelCaseActionName: 'getSomething'
+      };
+
+      expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.ROOT_SAGA);
+    });
+  });
+
+  describe('compileUpdatedFileContent', function() {
+
+    it('when called from when-creating-new/rootReducer.js', function() {
+      let re1 = /(.|\s)const rootReducer/ig;
+      let re2 = /const rootReduce(.|\s)*}\);/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: '/\nconst rootReducer', resolveIdentifier: resolveIdentifierRootReducer}, {regexExp: re2, FILE_FLAG: '});', resolveIdentifier: resolveIdentifierRootReducer}];
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.INITIAL_ROOT_REDUCER, compiledTemplate: compiledStaticTemplates.ROOT_REDUCER, regexArray})).to.equal(readMockFile(mockFilesPaths.CREATED_ROOT_REDUCER));
+    });
+
+    it('when called from when-creating-new/rootSaga.js', function() {
+      let re1 = /(.|\s)export default function\* rootSaga/ig;
+      let re2 = /export default function\* rootSaga(.|\s)*]\);/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: '\n\nexport default function* rootSaga', resolveIdentifier: resolveIdentifierRootSaga}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.INITIAL_ROOT_SAGA, compiledTemplate: compiledStaticTemplates.ROOT_SAGA, regexArray})).to.equal(readMockFile(mockFilesPaths.CREATED_ROOT_SAGA));
     });
   });
 });

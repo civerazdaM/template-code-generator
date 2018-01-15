@@ -122,7 +122,6 @@ const compileStaticTemplate = function ({pathToTemplate, templateArguments}) {
 
 const compileUpdatedFileContent = function ({pathToFile, compiledTemplate, regexArray}) {
   let originalFileContent = fs.readFileSync(pathToFile).toString();
-
   let position = 0;
   let lastMatchedPosition = 0;
   let results = [];
@@ -182,10 +181,53 @@ const writeFile = function ({newFilePath, content}) {
   });
 };
 
+const resolveIdentifierRootReducer = ({ data, match}) => {
+  let regexString = match[0];
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes('const rootReducer')){
+    TEMPLATE_START_FLAG = '#START_OF_REDUCER_IMPORT';
+    TEMPLATE_END_FLAG = '#END_OF_REDUCER_IMPORT';
+  }
+  if(regexString.includes('});')){
+    TEMPLATE_START_FLAG = '#START_OF_REDUCER';
+    TEMPLATE_END_FLAG = '#END_OF_REDUCER';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
+};
+
+const resolveIdentifierRootSaga = ({ data, match}) => {
+  let regexString = match[0];
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes('export default function* rootSaga')){
+    TEMPLATE_START_FLAG = '#START_OF_SAGA_IMPORT';
+    TEMPLATE_END_FLAG = '#END_OF_SAGA_IMPORT';
+  }
+  if(regexString.includes(']);')){
+    TEMPLATE_START_FLAG = '#START_OF_SAGA';
+    TEMPLATE_END_FLAG = '#END_OF_SAGA';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
+}
+
+const readMockFile = (filePath) => {
+  return fs.readFileSync(filePath).toString() + '\n';
+}
+
 module.exports = {
   checkArguments,
   parseInput,
   compileStaticTemplate,
   compileUpdatedFileContent,
-  writeFile
+  writeFile,
+  resolveIdentifierRootReducer,
+  resolveIdentifierRootSaga,
+  readMockFile
 }

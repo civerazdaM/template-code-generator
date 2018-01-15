@@ -10,6 +10,7 @@ const checkArguments = require('../../util').checkArguments;
 const parseInput = require('../../util').parseInput;
 const compileStaticTemplate = require('../../util').compileStaticTemplate;
 const compileUpdatedFileContent = require('../../util').compileUpdatedFileContent;
+const resolveIdentifierRootSaga = require('../../util').resolveIdentifierRootSaga;
 const writeFile = require('../../util').writeFile;
 
 try{
@@ -30,25 +31,8 @@ const templateArguments = {
 const compiledTemplate = compileStaticTemplate({pathToTemplate, templateArguments});
 
 let re1 = /(.|\s)export default function\* rootSaga/ig;
-function resolveIdentifier({ data, match}) {
-  let regexString = match[0];
-  let TEMPLATE_START_FLAG;
-  let TEMPLATE_END_FLAG;
-  if(regexString.includes('export default function* rootSaga')){
-    TEMPLATE_START_FLAG = '#START_OF_SAGA_IMPORT';
-    TEMPLATE_END_FLAG = '#END_OF_SAGA_IMPORT';
-  }
-  if(regexString.includes(']);')){
-    TEMPLATE_START_FLAG = '#START_OF_SAGA';
-    TEMPLATE_END_FLAG = '#END_OF_SAGA';
-  }
-  return {
-    TEMPLATE_START_FLAG,
-    TEMPLATE_END_FLAG
-  }
-}
 let re2 = /export default function\* rootSaga(.|\s)*]\);/ig;
-let regexArray = [{regexExp: re1, FILE_FLAG: '\n\nexport default function* rootSaga', resolveIdentifier}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier}];
+let regexArray = [{regexExp: re1, FILE_FLAG: '\n\nexport default function* rootSaga', resolveIdentifier: resolveIdentifierRootSaga}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
 
 let compiledUpdatedFileContent = compileUpdatedFileContent({pathToFile: parsedInput.filePath, compiledTemplate, regexArray});
 

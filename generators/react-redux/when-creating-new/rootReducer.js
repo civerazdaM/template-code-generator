@@ -10,6 +10,7 @@ const checkArguments = require('../../util').checkArguments;
 const parseInput = require('../../util').parseInput;
 const compileStaticTemplate = require('../../util').compileStaticTemplate;
 const compileUpdatedFileContent = require('../../util').compileUpdatedFileContent;
+const resolveIdentifierRootReducer = require('../../util').resolveIdentifierRootReducer;
 const writeFile = require('../../util').writeFile;
 
 try{
@@ -29,25 +30,8 @@ const templateArguments = {
 const compiledTemplate = compileStaticTemplate({pathToTemplate, templateArguments});
 
 let re1 = /(.|\s)const rootReducer/ig;
-function resolveIdentifier({ data, match}) {
-  let regexString = match[0];
-  let TEMPLATE_START_FLAG;
-  let TEMPLATE_END_FLAG;
-  if(regexString.includes('const rootReducer')){
-    TEMPLATE_START_FLAG = '#START_OF_REDUCER_IMPORT';
-    TEMPLATE_END_FLAG = '#END_OF_REDUCER_IMPORT';
-  }
-  if(regexString.includes('});')){
-    TEMPLATE_START_FLAG = '#START_OF_REDUCER';
-    TEMPLATE_END_FLAG = '#END_OF_REDUCER';
-  }
-  return {
-    TEMPLATE_START_FLAG,
-    TEMPLATE_END_FLAG
-  }
-}
 let re2 = /const rootReduce(.|\s)*}\);/ig;
-let regexArray = [{regexExp: re1, FILE_FLAG: '/\nconst rootReducer', resolveIdentifier}, {regexExp: re2, FILE_FLAG: '});', resolveIdentifier}];
+let regexArray = [{regexExp: re1, FILE_FLAG: '/\nconst rootReducer', resolveIdentifier: resolveIdentifierRootReducer}, {regexExp: re2, FILE_FLAG: '});', resolveIdentifier: resolveIdentifierRootReducer}];
 
 let compiledUpdatedFileContent = compileUpdatedFileContent({pathToFile: parsedInput.filePath, compiledTemplate, regexArray});
 

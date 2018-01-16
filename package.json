@@ -15,7 +15,15 @@
     "make:selectors": "node generators/react-redux/when-creating-new/selectors.js --scriptName=make:selectors",
     "make:containerComponent": "node generators/react-redux/when-creating-new/containerComponent.js --scriptName=make:containerComponent",
     "make:classComponent": "node generators/react-redux/when-creating-new/classComponent.js --scriptName=make:classComponent",
-    "make:container": "node generators/react-redux/when-creating-new/container.js --scriptName=make:container"
+    "make:container": "node generators/react-redux/when-creating-new/container.js --scriptName=make:container",
+    "update:constants": "node generators/react-redux/when-updating-existing/constants.js --scriptName=update:constants",
+    "update:api": "node generators/react-redux/when-updating-existing/api.js --scriptName=update:api",
+    "update:sagas": "node generators/react-redux/when-updating-existing/sagas.js --scriptName=update:sagas",
+    "update:rootSaga": "node generators/react-redux/when-updating-existing/rootSaga.js --scriptName=update:rootSaga",
+    "update:reducer": "node generators/react-redux/when-updating-existing/reducer.js --scriptName=update:reducer",
+    "update:selectors": "node generators/react-redux/when-updating-existing/selectors.js --scriptName=update:selectors",
+    "update:containerComponent": "node generators/react-redux/when-updating-existing/containerComponent.js --scriptName=update:containerComponent",
+    "update:container": "node generators/react-redux/when-updating-existing/container.js --scriptName=update:container"
   },
   "repository": {
     "type": "git",

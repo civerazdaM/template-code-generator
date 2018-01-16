@@ -7,6 +7,7 @@ const chalk = require('chalk');
 const fileNameTypes = require('./constants').fileNameTypes;
 const baseDirectoryPaths = require('./constants').baseDirectoryPaths;
 const END_OF_IMPORT_ALL = require('./constants').END_OF_IMPORT_ALL;
+const endNameStrings = require('./constants').endNameStrings;
 
 function createFileName({fileNameType, endNameString, camelCaseContainerName, pascalCaseContainerName}) {
   switch (fileNameType) {
@@ -50,7 +51,7 @@ function createMissingDirectories(filepath) {
 function parseRegex({ originalFileContent, regex, results }) {
   let match;
   while (match = regex.regexExp.exec(originalFileContent)) {
-    let identifier = regex.resolveIdentifier({originalFileContent, match});
+    let identifier = regex.resolveIdentifier({data: originalFileContent, match});
     results.push({start: match.index, end: match[0].length - regex.FILE_FLAG.length, match: match[0], FILE_FLAG: regex.FILE_FLAG, identifier:identifier});
   }
 
@@ -62,7 +63,7 @@ function insertStringAtPosition({originalString, stringToInsert, position}) {
 }
 
 function prepareDataForInsert({ regexString, identifier, FILE_FLAG, compiledTemplate }) {
-  if(!identifier.TEMPLATE_END_FLAG){
+  if(!identifier.TEMPLATE_START_FLAG || !identifier.TEMPLATE_END_FLAG || !compiledTemplate.includes(identifier.TEMPLATE_START_FLAG) || !compiledTemplate.includes(identifier.TEMPLATE_END_FLAG)){
     return false;
   }
   return parseSingleRegexStatement({regexString, FILE_FLAG, identifier, compiledTemplate});
@@ -122,6 +123,7 @@ const compileStaticTemplate = function ({pathToTemplate, templateArguments}) {
 
 const compileUpdatedFileContent = function ({pathToFile, compiledTemplate, regexArray}) {
   let originalFileContent = fs.readFileSync(pathToFile).toString();
+
   let position = 0;
   let lastMatchedPosition = 0;
   let results = [];
@@ -149,6 +151,7 @@ const compileUpdatedFileContent = function ({pathToFile, compiledTemplate, regex
         lastMatchedPosition += unchangedFileContent.length;
       }
       let preparedData = prepareDataForInsert({ regexString: curr.match, identifier: curr.identifier, FILE_FLAG: curr.FILE_FLAG, compiledTemplate }) ;
+
       if(preparedData) {
         acc = modifySelectedRegex({originalString: acc, preparedData, position});
         position = acc.length;
@@ -157,17 +160,17 @@ const compileUpdatedFileContent = function ({pathToFile, compiledTemplate, regex
 
       return acc;
     }, '');
-
-    if(lastMatchedPosition < originalFileContent.length) {
-      updatedFileContent += originalFileContent.substring(lastMatchedPosition, originalFileContent.length);
-    }
-
-    if(compiledTemplate.includes(END_OF_IMPORT_ALL)){
-      updatedFileContent += compiledTemplate.substring(compiledTemplate.lastIndexOf(END_OF_IMPORT_ALL) + END_OF_IMPORT_ALL.length, compiledTemplate.length);
-    }
-
-    return updatedFileContent;
   }
+
+  if(lastMatchedPosition < originalFileContent.length) {
+    updatedFileContent += originalFileContent.substring(lastMatchedPosition, originalFileContent.length);
+  }
+
+  if(compiledTemplate.includes(END_OF_IMPORT_ALL)){
+    updatedFileContent += compiledTemplate.substring(compiledTemplate.lastIndexOf(END_OF_IMPORT_ALL) + END_OF_IMPORT_ALL.length, compiledTemplate.length);
+  }
+
+  return updatedFileContent;
 
 };
 
@@ -215,10 +218,102 @@ const resolveIdentifierRootSaga = ({ data, match}) => {
     TEMPLATE_START_FLAG,
     TEMPLATE_END_FLAG
   }
+};
+
+const resolveIdentifierReducer = ({ data, match}) => {
+  let regexString = match[0];
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes('default:')){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_REDUCER_CASES';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_REDUCER_CASES';
+  }
+  if(regexString.includes('initialState')){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_INITIAL_STATE';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_INITIAL_STATE';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
+}
+
+const resolveIdentifierSelectors = ({ data, match}) => {
+  let regexString = match[0];
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes('export {')){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_SELECTOR';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_SELECTOR';
+  }
+  if(regexString.includes('}')){
+    TEMPLATE_START_FLAG = '#START_OF_EXPORT_SELECTOR';
+    TEMPLATE_END_FLAG = '#END_OF_EXPORT_SELECTOR';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
+};
+
+const resolveIdentifierContainerComponent = ({ data, match}) => {
+  let regexString = data.substring(match.index, match.index + data.substring(match.index, data.length).indexOf(";") + 1);
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes(".propTypes =")){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_PROP_TYPE';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_PROP_TYPE';
+  }
+
+  if(regexString.includes("mapStateToProps")){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_FROM_SELECTORS';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_FROM_SELECTORS';
+  }
+
+  if(regexString.includes("mapDispatchToProps")){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_DISPATCH';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_DISPATCH';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
+}
+
+function resolveIdentifierImports({ data, match}) {
+  let regexString = data.substring(match.index, match.index + data.substring(match.index, data.length).indexOf(";") + 1);
+  let TEMPLATE_START_FLAG;
+  let TEMPLATE_END_FLAG;
+  if(regexString.includes(changeCase.camelCase(this.container + endNameStrings.CONSTANTS))){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_CONSTANTS';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_CONSTANTS';
+  }
+  if(regexString.includes(changeCase.camelCase(this.container + endNameStrings.ACTIONS))){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_ACTIONS';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_ACTIONS';
+  }
+
+  if(regexString.includes(changeCase.camelCase(this.container + endNameStrings.API))){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_API';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_API';
+  }
+
+  if(regexString.includes(changeCase.camelCase(this.container + endNameStrings.SAGAS))){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_SAGA';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_SAGA';
+  }
+  if(regexString.includes(changeCase.camelCase(this.container + endNameStrings.SELECTORS))){
+    TEMPLATE_START_FLAG = '#START_OF_IMPORT_SELECTORS';
+    TEMPLATE_END_FLAG = '#END_OF_IMPORT_SELECTORS';
+  }
+  return {
+    TEMPLATE_START_FLAG,
+    TEMPLATE_END_FLAG
+  }
 }
 
 const readMockFile = (filePath) => {
-  return fs.readFileSync(filePath).toString() + '\n';
+  return fs.readFileSync(filePath).toString() ;
 }
 
 module.exports = {
@@ -229,5 +324,9 @@ module.exports = {
   writeFile,
   resolveIdentifierRootReducer,
   resolveIdentifierRootSaga,
+  resolveIdentifierReducer,
+  resolveIdentifierSelectors,
+  resolveIdentifierContainerComponent,
+  resolveIdentifierImports,
   readMockFile
 }

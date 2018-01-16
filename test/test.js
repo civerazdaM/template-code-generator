@@ -11,6 +11,10 @@ const compileStaticTemplate = require('../generators/util').compileStaticTemplat
 const compileUpdatedFileContent = require('../generators/util').compileUpdatedFileContent;
 const resolveIdentifierRootReducer = require('../generators/util').resolveIdentifierRootReducer;
 const resolveIdentifierRootSaga = require('../generators/util').resolveIdentifierRootSaga;
+const resolveIdentifierReducer = require('../generators/util').resolveIdentifierReducer;
+const resolveIdentifierSelectors = require('../generators/util').resolveIdentifierSelectors;
+const resolveIdentifierContainerComponent = require('../generators/util').resolveIdentifierContainerComponent;
+const resolveIdentifierImports = require('../generators/util').resolveIdentifierImports;
 
 const compiledStaticTemplates = require('../mock/constants').compiledStaticTemplates;
 const mockFilesPaths = require('../mock/constants').mockFilesPaths;
@@ -546,7 +550,7 @@ export default Something;`);
         pascalCaseActionName: 'GetAnother',
         camelCaseName: 'another'
       };
-
+      // console.log(compileStaticTemplate({pathToTemplate, templateArguments}))
       expect(compileStaticTemplate({pathToTemplate, templateArguments})).to.equal(compiledStaticTemplates.REDUCER_UPDATE);
     });
 
@@ -574,7 +578,7 @@ export default Something;`);
       const pathToTemplate = templateFilePaths.SELECTORS_UPDATE;
       const templateArguments = {
         pascalCaseActionName: 'GetAnother',
-        camelCaseContainerName: 'examole',
+        camelCaseContainerName: 'example',
         pascalCaseContainerName: 'Example',
         camelCaseName: 'another',
         pascalCaseName: 'Another'
@@ -610,6 +614,69 @@ export default Something;`);
       let re2 = /export default function\* rootSaga(.|\s)*]\);/ig;
       let regexArray = [{regexExp: re1, FILE_FLAG: '\n\nexport default function* rootSaga', resolveIdentifier: resolveIdentifierRootSaga}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
       expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.INITIAL_ROOT_SAGA, compiledTemplate: compiledStaticTemplates.ROOT_SAGA, regexArray})).to.equal(readMockFile(mockFilesPaths.CREATED_ROOT_SAGA));
+    });
+
+    it('when called from when-updating-existing/actions.js', function() {
+      let re1 = /import.*?}.from/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: 'example'}];
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_ACTIONS, compiledTemplate: compiledStaticTemplates.ACTIONS_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_ACTIONS));
+    });
+
+    it('when called from when-updating-existing/constants.js', function() {
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_CONSTANTS, compiledTemplate: compiledStaticTemplates.CONSTANTS_UPDATE})).to.equal(readMockFile(mockFilesPaths.UPDATED_CONSTANTS));
+    });
+
+    it('when called from when-updating-existing/api.js', function() {
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_API, compiledTemplate: compiledStaticTemplates.API_UPDATE})).to.equal(readMockFile(mockFilesPaths.UPDATED_API));
+    });
+
+    it('when called from when-updating-existing/sagas.js', function() {
+      let re1 = /import.*?}.from/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: 'example'}];
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_SAGAS, compiledTemplate: compiledStaticTemplates.SAGAS_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_SAGAS));
+    });
+
+    it('when called from when-updating-existing/rootSaga.js', function() {
+      let re1 = /import.*?}.from/ig;
+      let re2 = /export default function\* rootSaga(.|\s)*]\);/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: 'example'}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
+
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_ROOT_SAGA, compiledTemplate: compiledStaticTemplates.ROOT_SAGA_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_ROOT_SAGA));
+    });
+
+    it('when called from when-updating-existing/reducer.js', function() {
+      let re1 = /import.*?}.from/ig;
+      let re2 = /case(.|\s)*default:/ig;
+      let re3 = /initialState =(.|\s)*?}\);/ig;
+      let regexArray = [
+        {regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: 'example'},
+        {regexExp: re2, FILE_FLAG: '    default:', resolveIdentifier: resolveIdentifierReducer},
+        {regexExp: re3, FILE_FLAG: '});', resolveIdentifier: resolveIdentifierReducer}
+      ];
+
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_REDUCER, compiledTemplate: compiledStaticTemplates.REDUCER_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_REDUCER));
+    });
+
+    it('when called from when-updating-existing/selectors.js', function() {
+      let re1 = /(.|\s)export {/ig;
+      let re2 = /export {(.|\s)*}/ig;
+      let regexArray = [{regexExp: re1, FILE_FLAG: 'export {', resolveIdentifier: resolveIdentifierSelectors}, {regexExp: re2, FILE_FLAG: '}', resolveIdentifier: resolveIdentifierSelectors}];
+
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_SELECTORS, compiledTemplate: compiledStaticTemplates.SELECTORS_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_SELECTORS));
+    });
+
+    it('when called from when-updating-existing/containerComponent.js', function() {
+      let re1 = /import.*?}.from/ig;
+      let re2 = /\.propTypes (.|\s)*?};/ig;
+      let re3 = /mapStateToProps = (.|\s)*?}\);/ig;
+      let re4 = /mapDispatchToPropsObj(.|\s)*?};/ig;
+      let regexArray = [
+        {regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: 'example'},
+        {regexExp: re2, FILE_FLAG: '};', resolveIdentifier: resolveIdentifierContainerComponent},
+        {regexExp: re3, FILE_FLAG: '});', resolveIdentifier: resolveIdentifierContainerComponent},
+        {regexExp: re4, FILE_FLAG: '};', resolveIdentifier: resolveIdentifierContainerComponent}
+      ];
+      expect(compileUpdatedFileContent({pathToFile: mockFilesPaths.CREATED_CONTAINER_COMPONENT, compiledTemplate: compiledStaticTemplates.CONTAINER_COMPONENT_UPDATE, regexArray})).to.equal(readMockFile(mockFilesPaths.UPDATED_CONTAINER_COMPONENT));
     });
   });
 });

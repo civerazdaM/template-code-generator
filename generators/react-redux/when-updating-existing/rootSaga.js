@@ -4,13 +4,14 @@ const chalk = require('chalk');
 const baseDirectory = require('../../util/constants').baseDirectoryPaths.SRC;
 const fileNameType = require('../../util/constants').fileNameTypes.ROOT_SAGA;
 const endNameString = require('../../util/constants').endNameStrings.EMPTY;
-const pathToTemplate = require('../../util/constants').templateFilePaths.ROOT_SAGA;
+const pathToTemplate = require('../../util/constants').templateFilePaths.ROOT_SAGA_UPDATE;
 
 const checkArguments = require('../../util').checkArguments;
 const parseInput = require('../../util').parseInput;
 const compileStaticTemplate = require('../../util').compileStaticTemplate;
 const compileUpdatedFileContent = require('../../util').compileUpdatedFileContent;
 const resolveIdentifierRootSaga = require('../../util').resolveIdentifierRootSaga;
+const resolveIdentifierImports = require('../../util').resolveIdentifierImports;
 const writeFile = require('../../util').writeFile;
 
 try{
@@ -28,9 +29,9 @@ const templateArguments = {
 
 const compiledTemplate = compileStaticTemplate({pathToTemplate, templateArguments});
 
-let re1 = /(.|\s)export default function\* rootSaga/ig;
+let re1 = /import.*?}.from/ig;
 let re2 = /export default function\* rootSaga(.|\s)*]\);/ig;
-let regexArray = [{regexExp: re1, FILE_FLAG: '\n\nexport default function* rootSaga', resolveIdentifier: resolveIdentifierRootSaga}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
+let regexArray = [{regexExp: re1, FILE_FLAG: '} from', resolveIdentifier: resolveIdentifierImports, container: parsedInput.camelCaseContainerName}, {regexExp: re2, FILE_FLAG: '  ]);', resolveIdentifier: resolveIdentifierRootSaga}];
 
 let compiledUpdatedFileContent = compileUpdatedFileContent({pathToFile: parsedInput.filePath, compiledTemplate, regexArray});
 

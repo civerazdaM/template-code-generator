@@ -4,21 +4,21 @@
   is{{pascalCaseActionName}}InProgress: false,
   is{{pascalCaseActionName}}Failed: false
 #END_OF_IMPORT_INITIAL_STATE
-#START_OF_IMPORT_REDUCER_CASEScase {{constantActionName}}_REQUEST:
-    return state.withMutations((map) => {
-      map.set('is{{pascalCaseActionName}}InProgress', true)
-      .set('is{{pascalCaseActionName}}Failed', false)
-      .set('{{camelCaseName}}', undefined);
-    });
-  case {{constantActionName}}_SUCCESS:
-    return state.withMutations((map) => {
-      map.set('is{{pascalCaseActionName}}InProgress', false)
-      .set('{{camelCaseName}}', fromJS(action.{{camelCaseName}}));
-    });
-  case {{constantActionName}}_FAILURE:
-    return state.withMutations((map) => {
-      map.set('is{{pascalCaseActionName}}InProgress', false)
-      .set('is{{pascalCaseActionName}}Failed', true);
-    });
+#START_OF_IMPORT_REDUCER_CASES
+    case {{constantActionName}}_REQUEST:
+      return state.withMutations((map) => {
+        map.set('is{{pascalCaseActionName}}InProgress', true)
+          .set('is{{pascalCaseActionName}}Failed', false)
+          .set('{{camelCaseName}}', undefined);
+      });
+    case {{constantActionName}}_SUCCESS:
+      return state.withMutations((map) => {
+        map.set('is{{pascalCaseActionName}}InProgress', false)
+          .set('{{camelCaseName}}', fromJS(action.{{camelCaseName}}));
+      });
+    case {{constantActionName}}_FAILURE:
+      return state.withMutations((map) => {
+        map.set('is{{pascalCaseActionName}}InProgress', false)
+          .set('is{{pascalCaseActionName}}Failed', true);
+      });
 #END_OF_IMPORT_REDUCER_CASES
-#END_OF_IMPORT_ALL

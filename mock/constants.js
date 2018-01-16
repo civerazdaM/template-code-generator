@@ -33,13 +33,12 @@ export function getAnotherFailure() {
   };
 }
 `,
-  'CONSTANTS_UPDATE': `
-
+  'CONSTANTS_UPDATE': `#END_OF_IMPORT_ALL
 export const GET_ANOTHER_REQUEST = 'ExamplePage/GET_ANOTHER_REQUEST';
 export const GET_ANOTHER_SUCCESS = 'ExamplePage/GET_ANOTHER_SUCCESS';
 export const GET_ANOTHER_FAILURE = 'ExamplePage/GET_ANOTHER_FAILURE';
 `,
-  'API_UPDATE': `
+  'API_UPDATE': `#END_OF_IMPORT_ALL
 
 export function getAnotherApi() {
   return callApi({
@@ -57,25 +56,24 @@ export function getAnotherApi() {
   isGetAnotherInProgress: false,
   isGetAnotherFailed: false
 #END_OF_IMPORT_INITIAL_STATE
-#START_OF_IMPORT_REDUCER_CASEScase GET_ANOTHER_REQUEST:
-    return state.withMutations((map) => {
-      map.set('isGetAnotherInProgress', true)
-      .set('isGetAnotherFailed', false)
-      .set('another', undefined);
-    });
-  case GET_ANOTHER_SUCCESS:
-    return state.withMutations((map) => {
-      map.set('isGetAnotherInProgress', false)
-      .set('another', fromJS(action.another));
-    });
-  case GET_ANOTHER_FAILURE:
-    return state.withMutations((map) => {
-      map.set('isGetAnotherInProgress', false)
-      .set('isGetAnotherFailed', true);
-    });
-#END_OF_IMPORT_REDUCER_CASES
-#END_OF_IMPORT_ALL
-`,
+#START_OF_IMPORT_REDUCER_CASES
+    case GET_ANOTHER_REQUEST:
+      return state.withMutations((map) => {
+        map.set('isGetAnotherInProgress', true)
+          .set('isGetAnotherFailed', false)
+          .set('another', undefined);
+      });
+    case GET_ANOTHER_SUCCESS:
+      return state.withMutations((map) => {
+        map.set('isGetAnotherInProgress', false)
+          .set('another', fromJS(action.another));
+      });
+    case GET_ANOTHER_FAILURE:
+      return state.withMutations((map) => {
+        map.set('isGetAnotherInProgress', false)
+          .set('isGetAnotherFailed', true);
+      });
+#END_OF_IMPORT_REDUCER_CASES`,
   'SAGAS_UPDATE': `#START_OF_IMPORT_CONSTANTS, GET_ANOTHER_REQUEST #END_OF_IMPORT_CONSTANTS
 #START_OF_IMPORT_ACTIONS, getAnotherSuccess, getAnotherFailure #END_OF_IMPORT_ACTIONS
 #START_OF_IMPORT_API, getAnotherApi #END_OF_IMPORT_API
@@ -98,24 +96,22 @@ function* getAnother() {
 `,
   'ROOT_SAGA_UPDATE': `#START_OF_IMPORT_SAGA, getAnotherSaga #END_OF_IMPORT_SAGA
 #START_OF_SAGA
-  getAnotherSaga(),
-#END_OF_SAGA
-#END_OF_IMPORT_ALL
-`,
+    getAnotherSaga(),
+#END_OF_SAGA`,
   'SELECTORS_UPDATE': `#START_OF_IMPORT_SELECTOR
 const makeSelectIsGetAnotherInProgress = () => createSelector(
   selectExample,
-  (examoleState) => examoleState.get('isGetAnotherInProgress')
+  (exampleState) => exampleState.get('isGetAnotherInProgress')
 );
 
 const makeSelectIsGetAnotherFailed = () => createSelector(
   selectExample,
-  (examoleState) => examoleState.get('isGetAnotherFailed')
+  (exampleState) => exampleState.get('isGetAnotherFailed')
 );
 
 const makeSelectAnother = () => createSelector(
   selectExample,
-  (examoleState) => examoleState.get('another')
+  (exampleState) => exampleState.get('another')
 );
 
 #END_OF_IMPORT_SELECTOR
@@ -134,7 +130,7 @@ const makeSelectAnother = () => createSelector(
   isGetAnotherInProgress: PropTypes.bool.isRequired,
   isGetAnotherFailed: PropTypes.bool.isRequired,
   another: PropTypes.object,
-dispatchGetAnotherRequest: PropTypes.func.isRequired,
+  dispatchGetAnotherRequest: PropTypes.func.isRequired,
 #END_OF_IMPORT_PROP_TYPE
 
 #START_OF_IMPORT_FROM_SELECTORS
@@ -145,9 +141,7 @@ dispatchGetAnotherRequest: PropTypes.func.isRequired,
 
 #START_OF_IMPORT_DISPATCH
   dispatchGetAnotherRequest: getAnotherRequest,
-#END_OF_IMPORT_DISPATCH
-#END_OF_IMPORT_ALL
-`
+#END_OF_IMPORT_DISPATCH`
 };
 
 const mockFilesPaths = {
@@ -155,6 +149,21 @@ const mockFilesPaths = {
   'INITIAL_ROOT_SAGA': 'mock/react-redux/mocked-existing-files/before-creating-container/sagas.js',
   'CREATED_ROOT_REDUCER': 'mock/react-redux/mocked-existing-files/after-creating-container/reducers.js',
   'CREATED_ROOT_SAGA': 'mock/react-redux/mocked-existing-files/after-creating-container/sagas.js',
+  'CREATED_ACTIONS': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/exampleActions.js',
+  'CREATED_CONSTANTS': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/exampleConstants.js',
+  'CREATED_API': 'mock/react-redux/mocked-existing-files/after-creating-container/api/exampleApi.js',
+  'CREATED_SAGAS': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/exampleSagas.js',
+  'CREATED_REDUCER': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/exampleReducer.js',
+  'CREATED_SELECTORS': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/exampleSelectors.js',
+  'CREATED_CONTAINER_COMPONENT': 'mock/react-redux/mocked-existing-files/after-creating-container/containers/ExamplePage/index.js',
+  'UPDATED_ACTIONS': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/exampleActions.js',
+  'UPDATED_CONSTANTS': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/exampleConstants.js',
+  'UPDATED_API': 'mock/react-redux/mocked-existing-files/after-updating-container/api/exampleApi.js',
+  'UPDATED_SAGAS': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/exampleSagas.js',
+  'UPDATED_REDUCER': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/exampleReducer.js',
+  'UPDATED_SELECTORS': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/exampleSelectors.js',
+  'UPDATED_CONTAINER_COMPONENT': 'mock/react-redux/mocked-existing-files/after-updating-container/containers/ExamplePage/index.js',
+  'UPDATED_ROOT_SAGA': 'mock/react-redux/mocked-existing-files/after-updating-container/sagas.js',
 }
 
 module.exports = {
